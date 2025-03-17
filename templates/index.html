@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AiSensy Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #1e1e2e;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 11px;
+            margin: 10px 0;
+            max-width: 100%;
+        }
+        .user-message {
+            background-color: #00a884;
+            align-self: flex-end;
+            text-align: right;
+            color: white;
+            max-width: fit-content;
+            margin-left: auto;
+            padding: 10px 15px;
+        }
+        .bot-message {
+            background-color: #3a3a49;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 11px;
+            max-width: fit-content;
+        }
+        .input-container {
+            display: flex;
+            padding: 10px;
+            background: #13131a;
+            border-top: 1px solid #333;
+            border-radius: 27px;
+        }
+        .input-container input {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 27px;
+            margin-right: 10px;
+        }
+        .input-container button {
+            padding: 10px 15px;
+            background-color: #00a884;
+            border: none;
+            color: white;
+            border-radius: 27px;
+            cursor: pointer;
+        }
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #13131a;
+            border-bottom: 1px solid #333;
+        }
+        .modal-content {
+            background-color: #1e1e2e;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Chat Header with Ingest Data Button -->
+    <div class="chat-header" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #26263b; border-radius: 10px; margin-bottom: 15px;">
+        <h2 style="margin: 0 auto; font-size: 28px; font-weight: bold; font-family: 'Poppins', sans-serif; color: #00d4ff; text-shadow: 2px 2px 5px rgba(0, 212, 255, 0.5);">
+            AiSensy Chatbot
+        </h2>
+        <button class="btn btn-lg" style="background-color: #ff9800; color: white; font-weight: bold; border-radius: 25px; padding: 10px 20px; box-shadow: 0px 4px 10px rgba(255, 152, 0, 0.5);" data-bs-toggle="modal" data-bs-target="#ingestModal">
+            Input URLs
+        </button>
+    </div>
+    
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-container">
+            <input type="text" id="query" placeholder="Ask something...">
+            <button onclick="askQuestion()">Ask</button>
+        </div>
+    </div>
+
+    <!-- Ingest Data Modal -->
+    <div id="ingestModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: #13131a; color: white; padding: 20px; border-radius: 10px;">
+                <h3>Ingest Webpages</h3>
+                <textarea id="urls" class="form-control" rows="5" placeholder="Enter URLs (one per line)"></textarea>
+                <button class="btn btn-success mt-3 w-100" onclick="ingestData()">Ingest</button>
+                <button class="btn btn-danger mt-2 w-100" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        
+        function ingestData() {
+            const urls = document.getElementById("urls").value.split('\n').map(url => url.trim()).filter(url => url);
+            
+            if (urls.length === 0) {
+                alert("Please enter at least one valid URL.");
+                return;
+            }
+
+            fetch("/ingest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ urls })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showMessage("Data ingested successfully!", "bot-message"); // Display success message in chat
+                document.getElementById("urls").value = ""; // Clear input field
+                
+                // Close the modal properly
+                let modalElement = document.getElementById('ingestModal');
+                let modalInstance = bootstrap.Modal.getInstance(modalElement); 
+                modalInstance.hide();  
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function showMessage(text, className) {
+            const chatBox = document.getElementById("chat-box");
+            const message = document.createElement("div");
+            message.className = `message ${className}`;
+            message.textContent = text;
+            chatBox.appendChild(message);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+
+        function askQuestion() {
+            const query = document.getElementById("query").value.trim();
+            if (!query) return;
+            
+            const chatBox = document.getElementById("chat-box");
+            const userMessage = document.createElement("div");
+            userMessage.className = "message user-message";
+            userMessage.textContent = query;
+            chatBox.appendChild(userMessage);
+
+            fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const botMessage = document.createElement("div");
+                botMessage.className = "message bot-message";
+                botMessage.textContent = data.answer || "Error fetching response.";
+                chatBox.appendChild(botMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => console.error("Error:", error));
+            
+            document.getElementById("query").value = "";
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+streamlit
+langchain
+cassio
+langchain_community
+langchain_huggingface
+langchain_openai
+langchain_groq
+python-dotenv
+langchain_groq
+flask
+gunicorn
