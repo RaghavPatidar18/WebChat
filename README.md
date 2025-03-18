@@ -81,9 +81,4 @@ http://127.0.0.1:5000
    - Uses **Groq API (Gemma-2-9B-IT LLM)** to generate answers.
    - Stores conversation history for contextual responses.
 
-## Future Enhancements
-- Deploy as a web app using **Streamlit / FastAPI**
-- Add support for multiple document formats (PDF, TXT, etc.)
-- Improve response detail with a larger LLM model
-
 
