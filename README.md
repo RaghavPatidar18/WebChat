@@ -33,10 +33,9 @@ AISENSY/
 
 ## Installation
 
-### 1. Clone the Repository
+### 1. Clone the Repository and go to the directory
 ```sh
 git clone https://github.com/RaghavPatidar18/WebChat.git
-go to the directory
 ```
 
 ### 2. Install Dependencies
