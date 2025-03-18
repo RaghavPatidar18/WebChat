@@ -46,7 +46,7 @@ def answer_question(query, chat_history=None):
         raise ValueError(" FAISS index not found! Please run `ingest_data.py` first.")
 
     # Setup retriever & LLM
-    retriever = faiss_store.as_retriever(search_kwargs={"k": 3})
+    retriever = faiss_store.as_retriever(search_kwargs={"k": 5})
     llm = ChatGroq(model="gemma2-9b-it", groq_api_key=GROQ_API_KEY)
 
     # Create a conversational retrieval chain (adds memory)
