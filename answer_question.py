@@ -8,7 +8,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 
 # Load environment variables
-# load_dotenv()
+load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Define FAISS index path
@@ -47,14 +47,13 @@ def answer_question(query, chat_history=None):
 
     # Setup retriever & LLM
     retriever = faiss_store.as_retriever(search_kwargs={"k": 3})
-    llm = ChatGroq(model="llama-3.3-70b-specdec", groq_api_key=GROQ_API_KEY)
+    llm = ChatGroq(model="gemma2-9b-it", groq_api_key=GROQ_API_KEY)
 
     # Create a conversational retrieval chain (adds memory)
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=retriever,
         memory=memory,
-        # return_source_documents=True,
         output_key="answer",
         combine_docs_chain_kwargs={"prompt": prompt_template}  
     )
