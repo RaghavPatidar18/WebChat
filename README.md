@@ -37,6 +37,9 @@ AISENSY/
 ```sh
 git clone https://github.com/RaghavPatidar18/WebChat.git
 ```
+```sh
+cd WebChat
+```
 
 ### 2. Install Dependencies
 ```sh
