@@ -1,3 +1,9 @@
+
+
+![image](https://github.com/user-attachments/assets/008e42bd-b8db-44f1-865e-4bce897b5b18)
+
+![image](https://github.com/user-attachments/assets/8a107d21-8f6b-44f3-a7d6-72e26817172c)
+
 # AI Web Content Q&A System
 
 This project is an AI-powered question-answering system that retrieves content from given web pages, stores it in a vector database (FAISS), and answers user queries based **only** on the retrieved data. It utilizes **LangChain**, **Hugging Face Embeddings**, **Groq API**, and **FAISS** for efficient information retrieval and response generation.
