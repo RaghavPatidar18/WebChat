@@ -1,8 +1,15 @@
 from flask import Flask, render_template, request, jsonify
 from ingest_data import ingest_data
 from answer_question import answer_question
-
+import os
 app = Flask(__name__)
+
+FAISS_INDEX_PATH = "faiss_index"
+
+if not os.path.exists(os.path.join(FAISS_INDEX_PATH, "index.faiss")):
+    print(" FAISS index not found! Running ingestion process...")
+    test_urls = ["https://aisensy.com/features"]
+    ingest_data(test_urls)
 
 @app.route('/')
 def home():

@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
+
 
 # Load environment variables
 load_dotenv()
@@ -36,10 +37,10 @@ def ingest_data(urls):
 
     # Create FAISS vector store
     if os.path.exists(FAISS_INDEX_PATH):
-        faiss_store = FAISS.load_local(FAISS_INDEX_PATH, embeddings,allow_dangerous_deserialization=True)
+        faiss_store = FAISS.load_local(FAISS_INDEX_PATH, embeddings, allow_dangerous_deserialization=True)
         print("Loading existing FAISS index...")
     else:
-        faiss_store = FAISS.from_documents(doc_splits, embeddings,allow_dangerous_deserialization=True)
+        faiss_store = FAISS.from_documents(doc_splits, embeddings)
         print("Creating new FAISS index...")
 
     # Add new documents to FAISS
